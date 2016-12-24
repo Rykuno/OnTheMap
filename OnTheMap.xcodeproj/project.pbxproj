@@ -22,6 +22,7 @@
 		FC6ABF821E086BBD001ECBD0 /* ParseClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC6ABF811E086BBD001ECBD0 /* ParseClient.swift */; };
 		FC6ABF841E087D20001ECBD0 /* StudentInformationModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC6ABF831E087D20001ECBD0 /* StudentInformationModel.swift */; };
 		FC6ABF8C1E09CC10001ECBD0 /* TableVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC6ABF8B1E09CC10001ECBD0 /* TableVC.swift */; };
+		FCD28F741E0B8C7E0096B430 /* PinEditorVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = FCD28F731E0B8C7E0096B430 /* PinEditorVC.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -63,6 +64,7 @@
 		FC6ABF811E086BBD001ECBD0 /* ParseClient.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ParseClient.swift; sourceTree = "<group>"; };
 		FC6ABF831E087D20001ECBD0 /* StudentInformationModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StudentInformationModel.swift; sourceTree = "<group>"; };
 		FC6ABF8B1E09CC10001ECBD0 /* TableVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TableVC.swift; sourceTree = "<group>"; };
+		FCD28F731E0B8C7E0096B430 /* PinEditorVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PinEditorVC.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -169,6 +171,7 @@
 				FC6ABF7B1E08388F001ECBD0 /* MapVC.swift */,
 				FC6ABF7D1E085983001ECBD0 /* VCExtras.swift */,
 				FC6ABF8B1E09CC10001ECBD0 /* TableVC.swift */,
+				FCD28F731E0B8C7E0096B430 /* PinEditorVC.swift */,
 			);
 			name = Controller;
 			sourceTree = "<group>";
@@ -315,6 +318,7 @@
 				FC6ABF491E059E5A001ECBD0 /* LoginVC.swift in Sources */,
 				FC6ABF8C1E09CC10001ECBD0 /* TableVC.swift in Sources */,
 				FC6ABF471E059E5A001ECBD0 /* AppDelegate.swift in Sources */,
+				FCD28F741E0B8C7E0096B430 /* PinEditorVC.swift in Sources */,
 				FC6ABF781E0727F4001ECBD0 /* UdacityClient.swift in Sources */,
 				FC6ABF7A1E072A4A001ECBD0 /* Constants.swift in Sources */,
 				FC6ABF821E086BBD001ECBD0 /* ParseClient.swift in Sources */,

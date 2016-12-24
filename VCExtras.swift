@@ -14,7 +14,9 @@ extension UIViewController{
     func displayError(title: String, message: String){
             let alert = UIAlertController(title: "\(title)", message: "\(message)", preferredStyle: UIAlertControllerStyle.alert)
             alert.addAction(UIAlertAction(title: "Okay", style: UIAlertActionStyle.default, handler: nil))
-            self.present(alert, animated: true, completion: nil)
+            DispatchQueue.main.async {
+                self.present(alert, animated: true, completion: nil)
+            }
     }
     
     // Show activity indicator
@@ -52,6 +54,7 @@ extension UIViewController{
             }
         }
     }
+
     
     func openUrlInBrowser(url: String){
         if let url = URL(string:url){

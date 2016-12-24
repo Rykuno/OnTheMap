@@ -21,7 +21,16 @@ struct StudentInformation{
     var uniqueKey: String
     var objectId: String?
     
-    // MARK: Initializers
+    
+    init(firstName: String, lastName: String, mediaURL: String, mapString: String, uniqueKey: String, latitude: CLLocationDegrees, longitude: CLLocationDegrees) {
+        self.firstName = firstName
+        self.lastName = lastName
+        self.mediaURL = mediaURL
+        self.mapString = mapString
+        self.uniqueKey = uniqueKey
+        self.latitude = latitude
+        self.longitude = longitude
+    }
     
     // construct a StudentInformation from a dictionary
     init?(dictionary: [String:AnyObject]) {

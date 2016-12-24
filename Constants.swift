@@ -19,6 +19,8 @@ class Constants {
         struct ApiKeys{
             static let account = "account"
             static let key = "key"
+            static let lastName = "last_name"
+            static let firstName = "first_name"
 
         }
     }
@@ -32,6 +34,10 @@ class Constants {
         }
         
         struct ApiKeys{
+            static let parseApplicationID = "QrX47CA9cyuGewLdsL7o5Eb8iug6Em8ye0dnAbIr"
+            static let parseRestApiKey = "QuWThTdiRmTux3YaDseUSEpUKo7aBYM737yKd4gY"
+            static let createdAt = "createdAt"
+            static let updatedAt = "updatedAt"
             static let results = "results"
             static let objectID = "objectId"
             static let uniqueKey = "uniqueKey"
@@ -41,6 +47,12 @@ class Constants {
             static let mediaUrl = "mediaURL"
             static let latitude = "latitude"
             static let longitude = "longitude"
+            
         }
+    }
+    
+    struct HTTPMethods{
+        static let put = "PUT"
+        static let post = "POST"
     }
 }

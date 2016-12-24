@@ -14,6 +14,68 @@ class UdacityClient: NSObject{
     
     private override init() {}
     
+    
+    func getSingleUserData(userId: String, completionHandler: @escaping (_ firstname: String?, _ lastName: String?, _ error: String?)-> Void) {
+        let url = URL(string: Constants.UdacityConstants.UrlConstants.methodForGettingUserData+userId)
+        let request = URLRequest(url: url!)
+        let task = session.dataTask(with: request) { (data, response, error) in
+            guard error == nil else{
+                print("An error has occured \(error)")
+                completionHandler(nil, nil, "Check connection and try again")
+                return
+            }
+            
+            guard let data = data else{
+                completionHandler(nil, nil, "Data Error")
+                return
+            }
+            
+            guard let statusCode = (response as? HTTPURLResponse)?.statusCode else{
+                return
+            }
+            
+            guard statusCode >= 200 && statusCode <= 299 else{
+                completionHandler(nil, nil, "Check connection")
+                return
+            }
+            
+            let range = 5...data.count
+            let newData = data.subdata(in: Range(range))
+            
+            self.convertData(data: newData, completionHandlerForData: { (result, error) in
+                guard error == nil else{
+                    completionHandler(nil, nil, "Error parsing data")
+                    return
+                }
+                
+                guard let result = result else{
+                    completionHandler(nil, nil, "Error with data")
+                    return
+                }
+                
+                guard let user = result["user"] as? [String:AnyObject] else{
+                    completionHandler(nil, nil, "Error with data")
+                    return
+                }
+                
+                guard let firstName = user[Constants.UdacityConstants.ApiKeys.firstName] as? String else{
+                    completionHandler(nil, nil, "Error with data")
+                    return
+                }
+                
+                guard let lastName = user[Constants.UdacityConstants.ApiKeys.lastName] as? String else{
+                    completionHandler(nil, nil, "Error with data")
+                    return
+                }
+                
+                print(firstName, lastName)
+                completionHandler(firstName, lastName, nil)
+            })
+                
+        }
+        task.resume()
+    }
+    
     func postLoginSession(email:String, password: String, completionHandler: @escaping (_ success: Bool, _ error: String?) -> Void){
         let request = NSMutableURLRequest(url: URL(string: Constants.UdacityConstants.UrlConstants.methodForPostingSession)!)
         request.httpMethod = "POST"

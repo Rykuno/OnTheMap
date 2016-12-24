@@ -13,6 +13,8 @@ import MapKit
 class StudentInformationModel {
     private var arrayOfStudentInformation = [StudentInformation]()
     private var arrayOfStudentAnnotations = [MKPointAnnotation]()
+    private var objectId = String()
+    private init() {}
     
     func downloadDataAndParse(completionHandler: @escaping (_ success: Bool, _ error : String?) -> Void){
         ParseClient.sharedInstance().getAllStudentLocations { (locations, error) in
