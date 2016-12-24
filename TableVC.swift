@@ -19,7 +19,12 @@ class TableVC: UIViewController, UITableViewDelegate, UITableViewDataSource {
         super.viewDidLoad()
         locationTableView.delegate = self
         locationTableView.dataSource = self
+        }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(true)
         studentsArray = StudentInformationModel.sharedInstance().getStudentInformation()
+        locationTableView.reloadData()
     }
 
     @IBAction func logoutButtonPressed(_ sender: Any) {
@@ -40,6 +45,46 @@ class TableVC: UIViewController, UITableViewDelegate, UITableViewDataSource {
         loadMapViewAndAnnotations()
         locationTableView.reloadData()
     }
+
+    
+    @IBAction func createPin(_ sender: Any) {
+        let arrayOfStudents = StudentInformationModel.sharedInstance().getStudentInformation()
+        let userObjectID = UdacityClient.sharedInstance().accountKey
+        var studentExists = false
+        var studentObjectId = String()
+        
+        for student in arrayOfStudents {
+            if student.uniqueKey == userObjectID {
+                studentExists = true
+                studentObjectId = student.objectId!
+            }
+        }
+        
+        if studentExists{
+            let alert = UIAlertController(title: "Pin already exists", message: "Do you want to update information?", preferredStyle: UIAlertControllerStyle.alert)
+            alert.addAction(UIAlertAction(title: "Continue", style: .default, handler: { (action: UIAlertAction!) in
+                let controller = self.storyboard!.instantiateViewController(withIdentifier: "PinEditorVC") as! PinEditorVC
+                controller.studentUniqueId = studentObjectId
+                controller.method = Constants.HTTPMethods.put
+                self.present(controller, animated: true, completion: nil)
+            }))
+            
+            alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: { (action: UIAlertAction!) in
+            }))
+            
+            present(alert, animated: true, completion: nil)
+            
+        }else{
+            print("movingToSegue")
+            let controller = storyboard?.instantiateViewController(withIdentifier: "PinEditorVC") as! PinEditorVC
+            print("\(userObjectID) before segue")
+            controller.studentUniqueId = userObjectID
+            controller.method = Constants.HTTPMethods.post
+            self.present(controller, animated: true, completion: nil)
+        }
+    }
+    
+    
     
     func loadMapViewAndAnnotations(){
         activityIndicatoryShowing(showing: true, view: self.view)

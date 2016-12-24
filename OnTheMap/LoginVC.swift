@@ -11,11 +11,21 @@ import UIKit
 class LoginVC: UIViewController {
     @IBOutlet weak var emailTextField: UITextField!
     @IBOutlet weak var passwordTextField: UITextField!
+    @IBOutlet weak var accountSignupLabel: UILabel!
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        // Do any additional setup after loading the view, typically from a nib.
+        accountSignupLabel.isUserInteractionEnabled = true
+        let tap = UITapGestureRecognizer(target: self, action: #selector(self.accountSignup))
+        accountSignupLabel.addGestureRecognizer(tap)
+        
     }
+    
+    
+    func accountSignup(){
+        self.openUrlInBrowser(url: "https://www.udacity.com/account/auth#!/signup")
+    }
+    
     
 
     @IBAction func loginButtonPressed(_ sender: Any) {

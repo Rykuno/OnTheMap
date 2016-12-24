@@ -16,6 +16,7 @@ class PinEditorVC: UIViewController, MKMapViewDelegate {
     var studentUniqueId: String? = nil
     var method: String!
     var submittingLocation: Bool?
+    var presetUserLocation: String?
     var userLocation : CLLocationCoordinate2D?
     var mapString = String()
     var gotLocation = false
@@ -28,19 +29,22 @@ class PinEditorVC: UIViewController, MKMapViewDelegate {
         mapView.delegate = self
         submittingLocation = true
     }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(true)
+        if let presetLocation = presetUserLocation{
+        locationTextField.text = presetLocation
+        }
+    }
 
     @IBAction func cancelPressed(_ sender: Any) {
         self.dismiss(animated: true, completion: nil)
     }
 
     @IBAction func confirmButtonPressed(_ sender: Any) {
-        print(studentUniqueId!)
-        print(method)
-        print(UdacityClient.sharedInstance().accountKey)
         if gotLocation == false {
         getGeocodedLocationFromUser { (success, error) in
             if success{
-                    print("Button success")
                     self.locationTextField.text = ""
                     self.questionLabel1.text = "What are you"
                     self.submitButton.setTitle("Submit", for: UIControlState.normal)
@@ -48,31 +52,10 @@ class PinEditorVC: UIViewController, MKMapViewDelegate {
                 
             }
         }
-            
         }
         if gotLocation == true {
-            if let studyTopic = self.locationTextField.text {
-                UdacityClient.sharedInstance().getSingleUserData(userId: UdacityClient.sharedInstance().accountKey, completionHandler: { (firstName, lastName, error) in
-                    print("test")
-                    if let firstName = firstName, let lastName = lastName{
-                    let student = StudentInformation(firstName: firstName, lastName: lastName, mediaURL: studyTopic , mapString: self.mapString, uniqueKey: UdacityClient.sharedInstance().accountKey, latitude: (self.userLocation?.latitude)!, longitude: (self.userLocation?.longitude)!)
-                    
-                    ParseClient.sharedInstance().putOrPostStudentLocation(student: student, httpMethod: self.method, objectId: self.studentUniqueId, completionHandler: { (success, error) in
-                        guard error == nil else{
-                            self.displayError(title: "Oh-No!", message: error!)
-                            return
-                        }
-                         
-                        self.displayError(title: "Yay", message: "Successfully created Pin!")
-                        self.dismiss(animated: true, completion: nil)
-                    })
-                    }
-                })
-            }
+                submitLocation()
         }
-        
-        
-        
     }
     
     func getGeocodedLocationFromUser(completionHandler: @escaping (_ success : Bool, _ error: String?) -> Void) {
@@ -81,14 +64,14 @@ class PinEditorVC: UIViewController, MKMapViewDelegate {
             CLGeocoder().geocodeAddressString(locationText, completionHandler: { (placemark, error) in
                 self.processGeocodeResponse(withPlacemarks: placemark, error: error, coordCompletionHandler: { (success, error) in
                     guard error == nil else{
-                        self.displayError(title: "Geocode 1", message: error!)
-                        completionHandler(false, "Geocode 2")
+                        self.displayError(title: "Geocode Error", message: "Please enter valid location")
+                        completionHandler(false, "Please enter valid location")
                         return
                     }
                     
                     guard let userLocation = self.userLocation else{
-                        self.displayError(title: "Geocode 3", message: error!)
-                        completionHandler(false, "Geocode 4")
+                        self.displayError(title: "Geocode Error", message: "Please enter valid location")
+                        completionHandler(false, "Please enter valid location")
                         return
                     }
                     
@@ -103,6 +86,37 @@ class PinEditorVC: UIViewController, MKMapViewDelegate {
             })
         }else{
             completionHandler(false, "TextFields Empty")
+        }
+    }
+    
+    func submitLocation(){
+        if let studyTopic = self.locationTextField.text, studyTopic != "" {
+            self.activityIndicatoryShowing(showing: true, view: self.view)
+            UdacityClient.sharedInstance().getSingleUserData(userId: UdacityClient.sharedInstance().accountKey, completionHandler: { (firstName, lastName, error) in
+                print("test")
+                if let firstName = firstName, let lastName = lastName{
+                    let student = StudentInformation(firstName: firstName, lastName: lastName, mediaURL: studyTopic , mapString: self.mapString, uniqueKey: UdacityClient.sharedInstance().accountKey, latitude: (self.userLocation?.latitude)!, longitude: (self.userLocation?.longitude)!)
+                    
+                    ParseClient.sharedInstance().putOrPostStudentLocation(student: student, httpMethod: self.method, objectId: self.studentUniqueId, completionHandler: { (success, error) in
+                        if success{
+                            StudentInformationModel.sharedInstance().downloadDataAndParse(completionHandler: { (success, error) in
+                                if success{
+                                    DispatchQueue.main.async {
+                                        self.activityIndicatoryShowing(showing: false, view: self.view)
+                                        self.dismiss(animated: true, completion: nil)
+                                    }
+                                }else{
+                                    self.displayError(title: "Oh No", message: "Problem updating pin")
+                                }
+                            })
+                        }else{
+                            self.displayError(title: "Oh No", message: "Problem updating pin")
+                        }
+                    })
+                }
+            })
+        }else{
+            self.displayError(title: "Geocode Error", message: "Please enter what you're studying")
         }
     }
     
@@ -124,7 +138,6 @@ class PinEditorVC: UIViewController, MKMapViewDelegate {
              coordCompletionHandler(true, nil)
             
         } else {
-            print("No Matching Location Found")
             coordCompletionHandler(false, "No matching location found")
         }
         

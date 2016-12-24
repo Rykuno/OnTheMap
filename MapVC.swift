@@ -18,6 +18,12 @@ class MapVC: UIViewController, MKMapViewDelegate {
         loadMapViewAndAnnotations()
     }
     
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(true)
+        mapView.removeAnnotations(self.mapView.annotations)
+        self.mapView.addAnnotations(StudentInformationModel.sharedInstance().getStudentAnnotations())
+    }
+    
 
     @IBAction func logoutButtonPressed(_ sender: Any) {
         self.dismiss(animated: true) {
@@ -42,14 +48,26 @@ class MapVC: UIViewController, MKMapViewDelegate {
     @IBAction func createPin(_ sender: Any) {
         let arrayOfStudents = StudentInformationModel.sharedInstance().getStudentInformation()
         let userObjectID = UdacityClient.sharedInstance().accountKey
+        var userPresetLocation = String()
+        var studentExists = false
+        var studentObjectId = String()
         
         for student in arrayOfStudents {
             if student.uniqueKey == userObjectID {
+                studentExists = true
+                if let objectId = student.objectId, let userLocation = student.mapString {
+                    userPresetLocation = userLocation
+                    studentObjectId = objectId
+                }
+            }
+        }
+        
+        if studentExists{
             let alert = UIAlertController(title: "Pin already exists", message: "Do you want to update information?", preferredStyle: UIAlertControllerStyle.alert)
-            
             alert.addAction(UIAlertAction(title: "Continue", style: .default, handler: { (action: UIAlertAction!) in
                 let controller = self.storyboard!.instantiateViewController(withIdentifier: "PinEditorVC") as! PinEditorVC
-                controller.studentUniqueId = student.objectId
+                controller.presetUserLocation = userPresetLocation
+                controller.studentUniqueId = studentObjectId
                 controller.method = Constants.HTTPMethods.put
                 self.present(controller, animated: true, completion: nil)
             }))
@@ -67,7 +85,7 @@ class MapVC: UIViewController, MKMapViewDelegate {
             controller.method = Constants.HTTPMethods.post
             self.present(controller, animated: true, completion: nil)
         }
-        }
+        
     }
     
     
