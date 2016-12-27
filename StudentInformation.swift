@@ -10,8 +10,7 @@ import Foundation
 import MapKit
 
 struct StudentInformation{
-    // MARK: Properties
-    
+    //Properties
     var latitude: CLLocationDegrees
     var longitude: CLLocationDegrees
     var firstName: String
@@ -21,7 +20,7 @@ struct StudentInformation{
     var uniqueKey: String
     var objectId: String?
     
-    
+    //Constructor for StudentInformation
     init(firstName: String, lastName: String, mediaURL: String, mapString: String, uniqueKey: String, latitude: CLLocationDegrees, longitude: CLLocationDegrees) {
         self.firstName = firstName
         self.lastName = lastName
@@ -32,7 +31,7 @@ struct StudentInformation{
         self.longitude = longitude
     }
     
-    // construct a StudentInformation from a dictionary
+    //Constructor for StudentInformation from JSON dictionary
     init?(dictionary: [String:AnyObject]) {
         guard let latitude = dictionary[Constants.ParseConstants.ApiKeys.latitude] as? Double else {
             return nil
@@ -89,15 +88,14 @@ struct StudentInformation{
         }
         return arrayOfStudents
     }
-
+    
     //creates an array of map annotations from the student array
     static func createAnnotationsFrom(studentInformationArray: [StudentInformation])-> [MKPointAnnotation]{
         var arrayOfAnnonations = [MKPointAnnotation]()
         
-        
         for student in studentInformationArray{
-        let coordinate = CLLocationCoordinate2D(latitude: student.latitude, longitude: student.longitude)
-           let annotation = MKPointAnnotation()
+            let coordinate = CLLocationCoordinate2D(latitude: student.latitude, longitude: student.longitude)
+            let annotation = MKPointAnnotation()
             annotation.coordinate = coordinate
             annotation.title = "\(student.firstName) \(student.lastName)"
             annotation.subtitle = student.mediaURL

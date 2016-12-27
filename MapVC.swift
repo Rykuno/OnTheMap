@@ -12,7 +12,7 @@ import MapKit
 class MapVC: UIViewController, MKMapViewDelegate {
     
     @IBOutlet weak var mapView: MKMapView!
-
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         loadMapViewAndAnnotations()
@@ -24,7 +24,7 @@ class MapVC: UIViewController, MKMapViewDelegate {
         self.mapView.addAnnotations(StudentInformationModel.sharedInstance().getStudentAnnotations())
     }
     
-
+    
     @IBAction func logoutButtonPressed(_ sender: Any) {
         self.dismiss(animated: true) {
             UdacityClient.sharedInstance().deleteSession(completionHandler: { (success, error) in
@@ -78,14 +78,11 @@ class MapVC: UIViewController, MKMapViewDelegate {
             present(alert, animated: true, completion: nil)
             
         }else{
-            print("movingToSegue")
             let controller = storyboard?.instantiateViewController(withIdentifier: "PinEditorVC") as! PinEditorVC
-            print("\(userObjectID) before segue")
             controller.studentUniqueId = userObjectID
             controller.method = Constants.HTTPMethods.post
             self.present(controller, animated: true, completion: nil)
         }
-        
     }
     
     
@@ -105,7 +102,7 @@ class MapVC: UIViewController, MKMapViewDelegate {
     }
     
     func mapView(_ mapView: MKMapView, viewFor annotation: MKAnnotation) -> MKAnnotationView? {
-        
+          
         let reuseId = "pin"
         var pinView = mapView.dequeueReusableAnnotationView(withIdentifier: reuseId) as? MKPinAnnotationView
         if pinView == nil {
@@ -122,7 +119,7 @@ class MapVC: UIViewController, MKMapViewDelegate {
     func mapView(_ mapView: MKMapView, annotationView view: MKAnnotationView, calloutAccessoryControlTapped control: UIControl) {
         if control == view.rightCalloutAccessoryView {
             if let toOpen = view.annotation?.subtitle! {
-               self.openUrlInBrowser(url: toOpen)
+                self.openUrlInBrowser(url: toOpen)
             }
         }
     }

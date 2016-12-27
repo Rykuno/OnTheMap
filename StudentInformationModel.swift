@@ -14,8 +14,12 @@ class StudentInformationModel {
     private var arrayOfStudentInformation = [StudentInformation]()
     private var arrayOfStudentAnnotations = [MKPointAnnotation]()
     private var objectId = String()
+    
+    //private constructor
     private init() {}
     
+    
+    //downloads and parses data for the student information/annotation arrays.
     func downloadDataAndParse(completionHandler: @escaping (_ success: Bool, _ error : String?) -> Void){
         ParseClient.sharedInstance().getAllStudentLocations { (locations, error) in
             guard error == nil else{
@@ -29,25 +33,22 @@ class StudentInformationModel {
             }
             
             self.arrayOfStudentInformation = StudentInformation.parseResultsFromDownload(locations: locations)
-            
-            print(self.arrayOfStudentInformation.count)
-            
             self.arrayOfStudentAnnotations = StudentInformation.createAnnotationsFrom(studentInformationArray: self.arrayOfStudentInformation)
-            
-            print(self.arrayOfStudentAnnotations.count)
-                completionHandler(true, nil)
+            completionHandler(true, nil)
         }
     }
     
-    
+    //returns array of StudentInformation
     func getStudentInformation() -> [StudentInformation]{
         return arrayOfStudentInformation
     }
     
+    //returns array of StudentAnnotations
     func getStudentAnnotations() -> [MKPointAnnotation]{
         return arrayOfStudentAnnotations
     }
     
+    //Singleton
     class func sharedInstance() -> StudentInformationModel{
         struct Singleton{
             static var sharedInstance = StudentInformationModel()

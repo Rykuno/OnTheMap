@@ -10,11 +10,13 @@ import Foundation
 
 class UdacityClient: NSObject{
     let session = URLSession.shared
-    var accountKey: String = ""
+    var accountKey = String()
     
+    //Private constructor
     private override init() {}
     
     
+    //gets single user's data
     func getSingleUserData(userId: String, completionHandler: @escaping (_ firstname: String?, _ lastName: String?, _ error: String?)-> Void) {
         let url = URL(string: Constants.UdacityConstants.UrlConstants.methodForGettingUserData+userId)
         let request = URLRequest(url: url!)
@@ -71,11 +73,12 @@ class UdacityClient: NSObject{
                 print(firstName, lastName)
                 completionHandler(firstName, lastName, nil)
             })
-                
+            
         }
         task.resume()
     }
     
+    //logs client into their udacity account
     func postLoginSession(email:String, password: String, completionHandler: @escaping (_ success: Bool, _ error: String?) -> Void){
         let request = NSMutableURLRequest(url: URL(string: Constants.UdacityConstants.UrlConstants.methodForPostingSession)!)
         request.httpMethod = "POST"
@@ -97,7 +100,7 @@ class UdacityClient: NSObject{
             }
             
             guard let statusCode = (response as? HTTPURLResponse)?.statusCode else{
-               return
+                return
             }
             
             guard statusCode >= 200 && statusCode <= 299 else{
@@ -110,7 +113,7 @@ class UdacityClient: NSObject{
                     return
                 }
             }
-        
+            
             let range = 5...data.count
             let newData = data.subdata(in: Range(range))
             
@@ -143,8 +146,9 @@ class UdacityClient: NSObject{
         task.resume()
     }
     
+    //logs clients out of their udacity account
     func deleteSession(completionHandler: @escaping (_ success: Bool, _ error: String?) -> Void){
-        let request = NSMutableURLRequest(url: URL(string: "https://www.udacity.com/api/session")!)
+        let request = NSMutableURLRequest(url: URL(string: Constants.UdacityConstants.UrlConstants.methodForPostingSession)!)
         request.httpMethod = "DELETE"
         var xsrfCookie: HTTPCookie? = nil
         let sharedCookieStorage = HTTPCookieStorage.shared
@@ -179,21 +183,24 @@ class UdacityClient: NSObject{
         task.resume()
     }
     
+    //converts data to JSON dictionary
     private func convertData(data: Data, completionHandlerForData:(_ result: AnyObject?, _ error: NSError?) -> Void){
         var parsedData: AnyObject? = nil
         do{
             parsedData = try JSONSerialization.jsonObject(with: data, options: .allowFragments) as AnyObject
         }catch{
-            let userInfo = [NSLocalizedDescriptionKey : "Could not parse the data as JSON: '\(data)'"]
+            let userInfo = [NSLocalizedDescriptionKey : "Could not parse JSON data"]
             completionHandlerForData(nil, NSError(domain: "convertData", code: 1, userInfo: userInfo))
         }
         completionHandlerForData(parsedData, nil)
     }
     
-class func sharedInstance() -> UdacityClient{
-    struct Singleton{
-        static var sharedInstance = UdacityClient()
-    }
-    return Singleton.sharedInstance
+    
+    //Singleton
+    class func sharedInstance() -> UdacityClient{
+        struct Singleton{
+            static var sharedInstance = UdacityClient()
+        }
+        return Singleton.sharedInstance
     }
 }

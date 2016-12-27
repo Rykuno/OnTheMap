@@ -15,9 +15,9 @@ class ParseClient: NSObject{
     private override init() {}
     
     func getAllStudentLocations(completionHandler: @escaping (_ location: [[String: AnyObject]]?, _ error: String?) -> Void){
-        let request = NSMutableURLRequest(url: URL(string: "https://parse.udacity.com/parse/classes/StudentLocation")!)
-        request.addValue("QrX47CA9cyuGewLdsL7o5Eb8iug6Em8ye0dnAbIr", forHTTPHeaderField: "X-Parse-Application-Id")
-        request.addValue("QuWThTdiRmTux3YaDseUSEpUKo7aBYM737yKd4gY", forHTTPHeaderField: "X-Parse-REST-API-Key")
+        let request = NSMutableURLRequest(url: URL(string: Constants.ParseConstants.UrlConstants.methodForStudentLocations)!)
+        request.addValue(Constants.ParseConstants.UrlConstants.parseAppID, forHTTPHeaderField: "X-Parse-Application-Id")
+        request.addValue(Constants.ParseConstants.UrlConstants.RESTAPIKey, forHTTPHeaderField: "X-Parse-REST-API-Key")
         let session = URLSession.shared
         let task = session.dataTask(with: request as URLRequest) { data, response, error in
             
@@ -39,7 +39,7 @@ class ParseClient: NSObject{
                 completionHandler(nil, "Data Error")
                 return
             }
-                        
+            
             self.convertData(data: data, completionHandlerForData: { (result, error) in
                 guard error == nil else{
                     completionHandler(nil, "Data Error")
@@ -67,7 +67,7 @@ class ParseClient: NSObject{
         var stringUrl = String()
         if httpMethod == Constants.HTTPMethods.put{
             if let objectId = objectId{
-            stringUrl = "\(Constants.ParseConstants.UrlConstants.methodForStudentLocations)/\(objectId)"
+                stringUrl = "\(Constants.ParseConstants.UrlConstants.methodForStudentLocations)/\(objectId)"
             }
         }else{
             stringUrl = Constants.ParseConstants.UrlConstants.methodForStudentLocations
@@ -128,7 +128,7 @@ class ParseClient: NSObject{
         var parsedData: AnyObject? = nil
         do{
             parsedData = try JSONSerialization.jsonObject(with: data, options: .allowFragments) as AnyObject
-        
+            
         }catch{
             let userInfo = [NSLocalizedDescriptionKey : "Could not parse the data as JSON: '\(data)'"]
             completionHandlerForData(nil, NSError(domain: "convertData", code: 1, userInfo: userInfo))

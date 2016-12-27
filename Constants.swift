@@ -14,6 +14,7 @@ class Constants {
         struct UrlConstants{
             static let methodForPostingSession = "https://www.udacity.com/api/session"
             static let methodForGettingUserData = "https://www.udacity.com/api/users/"
+            static let methodForSignUp = "https://www.udacity.com/account/auth#!/signup"
         }
         
         struct ApiKeys{
@@ -21,7 +22,7 @@ class Constants {
             static let key = "key"
             static let lastName = "last_name"
             static let firstName = "first_name"
-
+            
         }
     }
     

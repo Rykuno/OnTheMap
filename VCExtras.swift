@@ -11,15 +11,17 @@ import UIKit
 
 extension UIViewController{
     
+    
+    //displays error to user with a title and message
     func displayError(title: String, message: String){
-            let alert = UIAlertController(title: "\(title)", message: "\(message)", preferredStyle: UIAlertControllerStyle.alert)
-            alert.addAction(UIAlertAction(title: "Okay", style: UIAlertActionStyle.default, handler: nil))
-            DispatchQueue.main.async {
-                self.present(alert, animated: true, completion: nil)
-            }
+        let alert = UIAlertController(title: "\(title)", message: "\(message)", preferredStyle: UIAlertControllerStyle.alert)
+        alert.addAction(UIAlertAction(title: "Okay", style: UIAlertActionStyle.default, handler: nil))
+        DispatchQueue.main.async {
+            self.present(alert, animated: true, completion: nil)
+        }
     }
     
-    // Show activity indicator
+    // Show activity indicator. Credit to raywenderlich.com
     func activityIndicatoryShowing(showing: Bool, view: UIView) {
         if showing {
             let activityIndicator: UIActivityIndicatorView = UIActivityIndicatorView()
@@ -54,8 +56,8 @@ extension UIViewController{
             }
         }
     }
-
     
+    //open urls within default browser
     func openUrlInBrowser(url: String){
         if let url = URL(string:url){
             UIApplication.shared.open(url, options: [:], completionHandler: nil)
