@@ -9,10 +9,18 @@
 import UIKit
 import MapKit
 
+protocol submitionCompletionProtocol {
+     func completionOfPin()
+}
+
+
 class PinEditorVC: UIViewController, MKMapViewDelegate {
+
+
     @IBOutlet weak var questionLabel1: UILabel!
     @IBOutlet weak var submitButton: UIButton!
     
+    var delegate: submitionCompletionProtocol? = nil
     var studentUniqueId: String? = nil
     var method: String!
     var submittingLocation: Bool?
@@ -20,6 +28,7 @@ class PinEditorVC: UIViewController, MKMapViewDelegate {
     var userLocation : CLLocationCoordinate2D?
     var mapString = String()
     var gotLocation = false
+    var sendingView: UIViewController?
     
     @IBOutlet weak var mapView: MKMapView!
     @IBOutlet weak var locationTextField: UITextField!
@@ -28,6 +37,7 @@ class PinEditorVC: UIViewController, MKMapViewDelegate {
         super.viewDidLoad()
         mapView.delegate = self
         submittingLocation = true
+        
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -37,35 +47,47 @@ class PinEditorVC: UIViewController, MKMapViewDelegate {
         }
     }
     
+    //dismisses VC
     @IBAction func cancelPressed(_ sender: Any) {
+       // self.dismiss(animated: true, completion: nil)
         self.dismiss(animated: true, completion: nil)
     }
     
+    //Confirms location and details from user.
     @IBAction func confirmButtonPressed(_ sender: Any) {
+        
+        //If we havent gotten the location
         if gotLocation == false {
             getGeocodedLocationFromUser { (success, error) in
                 if success{
-                    self.locationTextField.text = ""
+                    self.locationTextField.text = "Enter what you're studying"
                     self.questionLabel1.text = "What are you"
                     self.submitButton.setTitle("Submit", for: UIControlState.normal)
                     self.gotLocation = true
                 }else if let errormsg = error{
-                    self.displayError(title: "Geocode Error", message: errormsg)
+                    self.displayError(title: Constants.ErrorMessages.errorTitleGeocode, message: errormsg)
                 }
             }
         }
         
+        //If we have the location
         if gotLocation == true {
             self.activityIndicatoryShowing(showing: true, view: self.view)
             submitLocation(completionHandler: { (success, error) in
                 DispatchQueue.main.async {
                     if success{
                         self.activityIndicatoryShowing(showing: false, view: self.view)
-                        self.dismiss(animated: true, completion: nil)
+                        self.dismiss(animated: true, completion: {
+                            if self.method == Constants.HTTPMethods.post {
+                                self.sendingView?.displayError(title: "Success!", message: "Successfully created")
+                            }else{
+                            self.sendingView?.displayError(title: "Success!", message: "Successfully edited")
+                            }
+                        })
                     }else{
                         if let error = error{
                             self.activityIndicatoryShowing(showing: false, view: self.view)
-                            self.displayError(title: "Geocode Error", message: error)
+                            self.displayError(title: Constants.ErrorMessages.errorTitleGeocode, message: error)
                         }
                     }
                 }

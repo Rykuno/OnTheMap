@@ -37,7 +37,7 @@ class LoginVC: UIViewController {
                         }
                     }else if let error = error {
                         self.activityIndicatoryShowing(showing: false, view: self.view)
-                        self.displayError(title: "Uh-Oh!", message: error)
+                        self.displayError(title: Constants.ErrorMessages.errorTitleGeneric, message: error)
                     }
                 }
             }

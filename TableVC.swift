@@ -35,7 +35,7 @@ class TableVC: UIViewController, UITableViewDelegate, UITableViewDataSource {
                     if success{
                         print("success logging out")
                     }else if let error = error{
-                        self.displayError(title: "Uh-Oh!", message: error)
+                        self.displayError(title: Constants.ErrorMessages.errorTitleGeneric, message: error)
                     }
                 }
             })
@@ -73,6 +73,7 @@ class TableVC: UIViewController, UITableViewDelegate, UITableViewDataSource {
             alert.addAction(UIAlertAction(title: "Yes", style: .default, handler: { (action: UIAlertAction!) in
                 let controller = self.storyboard!.instantiateViewController(withIdentifier: "PinEditorVC") as! PinEditorVC
                 controller.presetUserLocation = userPresetLocation
+                controller.sendingView = self
                 controller.studentUniqueId = studentObjectId
                 controller.method = Constants.HTTPMethods.put
                 self.present(controller, animated: true, completion: nil)
@@ -87,6 +88,7 @@ class TableVC: UIViewController, UITableViewDelegate, UITableViewDataSource {
         }else{
             let controller = storyboard?.instantiateViewController(withIdentifier: "PinEditorVC") as! PinEditorVC
             controller.studentUniqueId = userObjectID
+            controller.sendingView = self
             controller.method = Constants.HTTPMethods.post
             self.present(controller, animated: true, completion: nil)
         }
@@ -101,7 +103,7 @@ class TableVC: UIViewController, UITableViewDelegate, UITableViewDataSource {
                     self.activityIndicatoryShowing(showing: false, view: self.view)
                     self.studentsArray = StudentInformationModel.sharedInstance().getStudentInformation()
                 }else if let error = error {
-                    self.displayError(title: "Oh-No!", message: error)
+                    self.displayError(title: Constants.ErrorMessages.errorTitleGeneric, message: error)
                     self.activityIndicatoryShowing(showing: false, view: self.view)
                 }
             }

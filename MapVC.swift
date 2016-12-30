@@ -13,6 +13,7 @@ class MapVC: UIViewController, MKMapViewDelegate {
     
     @IBOutlet weak var mapView: MKMapView!
     
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         loadMapViewAndAnnotations()
@@ -32,7 +33,7 @@ class MapVC: UIViewController, MKMapViewDelegate {
                     if success{
                         print("Success Logging out")
                     }else if let error = error{
-                        self.displayError(title: "Uh-Oh!", message: error)
+                        self.displayError(title: Constants.ErrorMessages.errorTitleGeneric, message: error)
                     }
                 }
             })
@@ -68,6 +69,7 @@ class MapVC: UIViewController, MKMapViewDelegate {
                 let controller = self.storyboard!.instantiateViewController(withIdentifier: "PinEditorVC") as! PinEditorVC
                 controller.presetUserLocation = userPresetLocation
                 controller.studentUniqueId = studentObjectId
+                controller.sendingView = self
                 controller.method = Constants.HTTPMethods.put
                 self.present(controller, animated: true, completion: nil)
             }))
@@ -76,6 +78,7 @@ class MapVC: UIViewController, MKMapViewDelegate {
             }))
             
             present(alert, animated: true, completion: nil)
+            
             
         }else{
             let controller = storyboard?.instantiateViewController(withIdentifier: "PinEditorVC") as! PinEditorVC
@@ -94,7 +97,7 @@ class MapVC: UIViewController, MKMapViewDelegate {
                     self.activityIndicatoryShowing(showing: false, view: self.view)
                     self.mapView.addAnnotations(StudentInformationModel.sharedInstance().getStudentAnnotations())
                 }else if let error = error {
-                    self.displayError(title: "Oh-No!", message: error)
+                    self.displayError(title: Constants.ErrorMessages.errorTitleGeneric, message: error)
                     self.activityIndicatoryShowing(showing: false, view: self.view)
                 }
             }

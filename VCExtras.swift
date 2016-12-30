@@ -62,7 +62,7 @@ extension UIViewController{
         if let url = URL(string:url){
             UIApplication.shared.open(url, options: [:], completionHandler: nil)
         }else{
-            self.displayError(title: "Oh-No", message: "Unable to open url")
+            self.displayError(title: Constants.ErrorMessages.errorTitleGeneric, message: "Unable to open url")
         }
     }
 }

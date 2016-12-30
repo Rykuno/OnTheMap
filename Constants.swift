@@ -56,4 +56,10 @@ class Constants {
         static let put = "PUT"
         static let post = "POST"
     }
+    
+    struct ErrorMessages{
+        static let errorTitleGeneric = "Oh-No!"
+        static let errorTitleGeocode = "Geocode Error"
+        
+    }
 }

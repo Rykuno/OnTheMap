@@ -78,14 +78,16 @@ struct StudentInformation{
     //creates an array of Students from the JSON array passed in.
     static func parseResultsFromDownload(locations: [[String: AnyObject]]) -> [StudentInformation] {
         var arrayOfStudents = [StudentInformation]()
+        var errorCount = 0
         
         for location in locations {
             if let student = StudentInformation(dictionary: location){
                 arrayOfStudents.append(student)
             }else{
-                print("Error parsing Student")
+                errorCount += 1
             }
         }
+        print("error parsing \(errorCount) students")
         return arrayOfStudents
     }
     
