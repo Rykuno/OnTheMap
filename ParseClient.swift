@@ -15,14 +15,14 @@ class ParseClient: NSObject{
     private override init() {}
     
     func getAllStudentLocations(completionHandler: @escaping (_ location: [[String: AnyObject]]?, _ error: String?) -> Void){
-        let request = NSMutableURLRequest(url: URL(string: Constants.ParseConstants.UrlConstants.methodForStudentLocations)!)
+        let request = NSMutableURLRequest(url: URL(string: Constants.ParseConstants.UrlConstants.methodForStudentLocationsWithParameters)!)
         request.addValue(Constants.ParseConstants.UrlConstants.parseAppID, forHTTPHeaderField: "X-Parse-Application-Id")
         request.addValue(Constants.ParseConstants.UrlConstants.RESTAPIKey, forHTTPHeaderField: "X-Parse-REST-API-Key")
         let session = URLSession.shared
         let task = session.dataTask(with: request as URLRequest) { data, response, error in
             
             guard error == nil else{
-                completionHandler(nil, "An error has occured")
+                completionHandler(nil, "Check connection and try again")
                 return
             }
             
@@ -83,7 +83,7 @@ class ParseClient: NSObject{
         
         let task = session.dataTask(with: request) { (data, response, error) in
             guard error == nil else{
-                completionHandler(false, "An error has occured")
+                completionHandler(false, "Check connection and try again")
                 return
             }
             

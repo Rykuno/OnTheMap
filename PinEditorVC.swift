@@ -9,10 +9,6 @@
 import UIKit
 import MapKit
 
-protocol submitionCompletionProtocol {
-     func completionOfPin()
-}
-
 
 class PinEditorVC: UIViewController, MKMapViewDelegate {
 
@@ -20,7 +16,6 @@ class PinEditorVC: UIViewController, MKMapViewDelegate {
     @IBOutlet weak var questionLabel1: UILabel!
     @IBOutlet weak var submitButton: UIButton!
     
-    var delegate: submitionCompletionProtocol? = nil
     var studentUniqueId: String? = nil
     var method: String!
     var submittingLocation: Bool?
@@ -29,7 +24,7 @@ class PinEditorVC: UIViewController, MKMapViewDelegate {
     var mapString = String()
     var gotLocation = false
     var sendingView: UIViewController?
-    
+    let textFieldDelegate = TextFieldDelegate()
     @IBOutlet weak var mapView: MKMapView!
     @IBOutlet weak var locationTextField: UITextField!
     
@@ -37,7 +32,9 @@ class PinEditorVC: UIViewController, MKMapViewDelegate {
         super.viewDidLoad()
         mapView.delegate = self
         submittingLocation = true
-        
+        self.registerKeyboardNotifications(textField: locationTextField)
+        locationTextField.delegate = textFieldDelegate
+
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -45,6 +42,11 @@ class PinEditorVC: UIViewController, MKMapViewDelegate {
         if let presetLocation = presetUserLocation{
             locationTextField.text = presetLocation
         }
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(true)
+        self.deregisterFromKeyboardNotifications()
     }
     
     //dismisses VC
@@ -72,11 +74,11 @@ class PinEditorVC: UIViewController, MKMapViewDelegate {
         
         //If we have the location
         if gotLocation == true {
-            self.activityIndicatoryShowing(showing: true, view: self.view)
+            self.activityIndicatoryShowing(showing: true, view: self.mapView)
             submitLocation(completionHandler: { (success, error) in
                 DispatchQueue.main.async {
                     if success{
-                        self.activityIndicatoryShowing(showing: false, view: self.view)
+                        self.activityIndicatoryShowing(showing: false, view: self.mapView)
                         self.dismiss(animated: true, completion: {
                             if self.method == Constants.HTTPMethods.post {
                                 self.sendingView?.displayError(title: "Success!", message: "Successfully created")
@@ -86,7 +88,7 @@ class PinEditorVC: UIViewController, MKMapViewDelegate {
                         })
                     }else{
                         if let error = error{
-                            self.activityIndicatoryShowing(showing: false, view: self.view)
+                            self.activityIndicatoryShowing(showing: false, view: self.mapView)
                             self.displayError(title: Constants.ErrorMessages.errorTitleGeocode, message: error)
                         }
                     }
@@ -98,14 +100,17 @@ class PinEditorVC: UIViewController, MKMapViewDelegate {
     func getGeocodedLocationFromUser(completionHandler: @escaping (_ success : Bool, _ error: String?) -> Void) {
         if let locationText = locationTextField.text, locationText != "" {
             mapString = locationText
+            self.activityIndicatoryShowing(showing: true, view: self.view)
             CLGeocoder().geocodeAddressString(locationText, completionHandler: { (placemark, error) in
                 self.processGeocodeResponse(withPlacemarks: placemark, error: error, coordCompletionHandler: { (success, error) in
                     guard error == nil else{
+                        self.activityIndicatoryShowing(showing: false, view: self.view)
                         completionHandler(false, "Enter valid location")
                         return
                     }
                     
                     guard let userLocation = self.userLocation else{
+                        self.activityIndicatoryShowing(showing: false, view: self.view)
                         completionHandler(false, "Enter valid location")
                         return
                     }
@@ -117,6 +122,7 @@ class PinEditorVC: UIViewController, MKMapViewDelegate {
                     let region = MKCoordinateRegionMake(userLocation, span)
                     self.mapView.setRegion(region, animated: true)
                     completionHandler(true, nil)
+                    self.activityIndicatoryShowing(showing: false, view: self.view)
                 })
             })
         }else{
@@ -125,7 +131,7 @@ class PinEditorVC: UIViewController, MKMapViewDelegate {
     }
     
     func submitLocation(completionHandler : @escaping (_ success: Bool, _ error : String?) -> Void){
-        if let studyTopic = self.locationTextField.text, studyTopic != "" {
+        if let studyTopic = self.locationTextField.text, studyTopic != "", studyTopic != "Enter what you're studying" {
             UdacityClient.sharedInstance().getSingleUserData(userId: UdacityClient.sharedInstance().accountKey, completionHandler: { (firstName, lastName, error) in
                 if let firstName = firstName, let lastName = lastName{
                     let student = StudentInformation(firstName: firstName, lastName: lastName, mediaURL: studyTopic , mapString: self.mapString, uniqueKey: UdacityClient.sharedInstance().accountKey, latitude: (self.userLocation?.latitude)!, longitude: (self.userLocation?.longitude)!)
@@ -144,7 +150,8 @@ class PinEditorVC: UIViewController, MKMapViewDelegate {
                         }
                     })
                 }else{
-                    completionHandler(false, "Failed to parse data")
+                    print("Handle error \(error!)")
+                    completionHandler(false, "Check network condition")
                 }
             })
         }else{

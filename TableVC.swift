@@ -127,8 +127,6 @@ class TableVC: UIViewController, UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let urlToOpen = studentsArray[indexPath.row].mediaURL
         self.openUrlInBrowser(url: urlToOpen)
+        tableView.deselectRow(at: indexPath, animated: true)
     }
-    
-    
-    
 }

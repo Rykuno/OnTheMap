@@ -8,16 +8,25 @@
 
 import UIKit
 
-class LoginVC: UIViewController {
+class LoginVC: UIViewController, UITextFieldDelegate {
     @IBOutlet weak var emailTextField: UITextField!
     @IBOutlet weak var passwordTextField: UITextField!
     @IBOutlet weak var accountSignupLabel: UILabel!
+    let textDelegate = TextFieldDelegate()
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        self.registerKeyboardNotifications(textField: passwordTextField)
         accountSignupLabel.isUserInteractionEnabled = true
         let tap = UITapGestureRecognizer(target: self, action: #selector(self.accountSignup))
         accountSignupLabel.addGestureRecognizer(tap)
+        emailTextField.delegate = textDelegate
+        passwordTextField.delegate = textDelegate
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(true)
+        self.deregisterFromKeyboardNotifications()
     }
     
     
@@ -50,5 +59,7 @@ class LoginVC: UIViewController {
             completionHandler()
         }
     }
+    
+    
 }
 
