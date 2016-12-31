@@ -134,6 +134,8 @@
                     <connections>
                         <outlet property="accountSignupLabel" destination="Ohk-vg-6hE" id="Duz-oW-hG0"/>
                         <outlet property="emailTextField" destination="gtW-ej-gYp" id="Uyb-Sv-6Zv"/>
+                        <outlet property="loginButton" destination="XbN-OP-WlF" id="K3W-wh-6a5"/>
+                        <outlet property="loginWithFacebookButton" destination="qyj-Ox-du8" id="9DX-ZQ-qev"/>
                         <outlet property="passwordTextField" destination="fsF-2a-DqY" id="Ecv-AE-CCX"/>
                     </connections>
                 </viewController>

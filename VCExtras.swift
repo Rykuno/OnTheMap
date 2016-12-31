@@ -67,8 +67,8 @@ extension UIViewController{
     }
     
     //Keyboard Functions
-    func registerKeyboardNotifications(textField: UITextField){
-        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow(notification:textField:)), name: NSNotification.Name.UIKeyboardWillShow, object: nil)
+    func registerKeyboardNotifications(){
+        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow(notification:)), name: NSNotification.Name.UIKeyboardWillShow, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide(notification:)), name: NSNotification.Name.UIKeyboardWillHide, object: nil)
     }
     
@@ -78,9 +78,9 @@ extension UIViewController{
         NotificationCenter.default.removeObserver(self, name: NSNotification.Name.UIKeyboardWillHide, object: nil)
     }
     
-    func keyboardWillShow(notification: NSNotification, textField: UITextField) {
+    func keyboardWillShow(notification: NSNotification) {
         if let keyboardSize = (notification.userInfo?[UIKeyboardFrameBeginUserInfoKey] as? NSValue)?.cgRectValue {
-            if self.view.frame.origin.y == 0 && textField.isEditing  {
+            if self.view.frame.origin.y == 0  {
                 self.view.frame.origin.y -= keyboardSize.height
             }
         }

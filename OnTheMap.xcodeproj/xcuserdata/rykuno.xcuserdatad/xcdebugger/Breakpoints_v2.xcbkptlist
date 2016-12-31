@@ -25,13 +25,13 @@
             shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "OnTheMap/LoginVC.swift"
-            timestampString = "504889987.310711"
+            filePath = "PinEditorVC.swift"
+            timestampString = "504892658.106762"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "19"
-            endingLineNumber = "19"
-            landmarkName = "viewDidLoad()"
+            startingLineNumber = "66"
+            endingLineNumber = "66"
+            landmarkName = "confirmButtonPressed(_:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>

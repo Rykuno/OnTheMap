@@ -32,13 +32,13 @@ class PinEditorVC: UIViewController, MKMapViewDelegate {
         super.viewDidLoad()
         mapView.delegate = self
         submittingLocation = true
-        self.registerKeyboardNotifications(textField: locationTextField)
         locationTextField.delegate = textFieldDelegate
 
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(true)
+        subscribedToKeyboardNotifications(true)
         if let presetLocation = presetUserLocation{
             locationTextField.text = presetLocation
         }
@@ -46,7 +46,7 @@ class PinEditorVC: UIViewController, MKMapViewDelegate {
     
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(true)
-        self.deregisterFromKeyboardNotifications()
+        subscribedToKeyboardNotifications(false)
     }
     
     //dismisses VC
@@ -63,6 +63,7 @@ class PinEditorVC: UIViewController, MKMapViewDelegate {
             getGeocodedLocationFromUser { (success, error) in
                 if success{
                     self.locationTextField.text = "Enter what you're studying"
+                    self.locationTextField.clearsOnBeginEditing = true
                     self.questionLabel1.text = "What are you"
                     self.submitButton.setTitle("Submit", for: UIControlState.normal)
                     self.gotLocation = true
@@ -180,5 +181,34 @@ class PinEditorVC: UIViewController, MKMapViewDelegate {
         }
         
     }
+    
+    // Move view up, so both textviews and loginButton are visible
+    func keyboardWillShow(_ notification: Notification) {
+        view.frame.origin.y = (getKeyboardHeight(notification: notification) - (view.frame.height - mapView.frame.maxY) ) * -0.25
+    }
+    // Move view back
+    func keyboardWillHide(_ notification:Notification) {
+        view.frame.origin.y = 0
+    }
+    
+    func getKeyboardHeight(notification: Notification) -> CGFloat {
+        let userInfo = notification.userInfo
+        let keyboardSize = userInfo![UIKeyboardFrameEndUserInfoKey] as! NSValue
+        return keyboardSize.cgRectValue.height
+    }
+    
+    
+    
+    // Adding or removing observers for keyboard notifications
+    func subscribedToKeyboardNotifications(_ state: Bool) {
+        if state {
+            NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow(_:)), name: .UIKeyboardWillShow, object: nil)
+            NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide(_:)) , name: .UIKeyboardWillHide, object: nil)
+        } else {
+            NotificationCenter.default.removeObserver(self, name: .UIKeyboardWillShow, object: nil)
+            NotificationCenter.default.removeObserver(self, name: .UIKeyboardWillHide, object: nil)
+        }
+    }
+    
     
 }
