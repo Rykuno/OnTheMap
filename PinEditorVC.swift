@@ -177,14 +177,12 @@ class PinEditorVC: UIViewController, MKMapViewDelegate, UITextFieldDelegate  {
         }
     }
     
-    // Move view up, so both textviews and loginButton are visible
     func keyboardWillShow(_ notification: Notification) {
         if UIDeviceOrientationIsLandscape(UIDevice.current.orientation) {
             view.frame.origin.y = (getKeyboardHeight(notification: notification) - (view.frame.height - locationTextField.frame.maxY) ) * -0.6
         }
         
     }
-    // Move view back
     func keyboardWillHide(_ notification:Notification) {
         view.frame.origin.y = 0
     }
@@ -197,7 +195,6 @@ class PinEditorVC: UIViewController, MKMapViewDelegate, UITextFieldDelegate  {
     
     
     
-    // Adding or removing observers for keyboard notifications
     func subscribedToKeyboardNotifications(_ state: Bool) {
         if state {
             NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow(_:)), name: .UIKeyboardWillShow, object: nil)
