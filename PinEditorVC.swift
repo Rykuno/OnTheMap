@@ -59,7 +59,7 @@ class PinEditorVC: UIViewController, MKMapViewDelegate, UITextFieldDelegate  {
         if gotLocation == false {
             getGeocodedLocationFromUser { (success, error) in
                 if success{
-                    self.locationTextField.text = "Enter what you're studying"
+                    self.locationTextField.text = "Enter a valid URL"
                     self.questionLabel1.text = "What are you"
                     self.submitButton.setTitle("Submit", for: UIControlState.normal)
                     self.gotLocation = true
@@ -128,9 +128,9 @@ class PinEditorVC: UIViewController, MKMapViewDelegate, UITextFieldDelegate  {
     }
     
     func submitLocation(completionHandler : @escaping (_ success: Bool, _ error : String?) -> Void){
-        if let studyTopic = self.locationTextField.text, studyTopic != "", studyTopic != "Enter what you're studying" {
+        if let studyTopic = self.locationTextField.text, studyTopic != "", studyTopic != "Enter a valid URL", checkValidUrl(urlString: studyTopic) == true {
             UdacityClient.sharedInstance().getSingleUserData(userId: UdacityClient.sharedInstance().accountKey, completionHandler: { (firstName, lastName, error) in
-                if let firstName = firstName, let lastName = lastName{
+                if let firstName = firstName, let lastName = lastName {
                     let student = StudentInformation(firstName: firstName, lastName: lastName, mediaURL: studyTopic , mapString: self.mapString, uniqueKey: UdacityClient.sharedInstance().accountKey, latitude: (self.userLocation?.latitude)!, longitude: (self.userLocation?.longitude)!)
                     
                     ParseClient.sharedInstance().putOrPostStudentLocation(student: student, httpMethod: self.method, objectId: self.studentUniqueId, completionHandler: { (success, error) in
@@ -152,7 +152,7 @@ class PinEditorVC: UIViewController, MKMapViewDelegate, UITextFieldDelegate  {
                 }
             })
         }else{
-            completionHandler(false, "Enter what you're studying")
+            completionHandler(false, "Enter a valid URL")
         }
     }
     
@@ -163,7 +163,7 @@ class PinEditorVC: UIViewController, MKMapViewDelegate, UITextFieldDelegate  {
         }
         
         var location: CLLocation?
-        
+    
         if let placemarks = placemarks, placemarks.count > 0 {
             location = placemarks.first?.location
         }
@@ -212,6 +212,13 @@ class PinEditorVC: UIViewController, MKMapViewDelegate, UITextFieldDelegate  {
     
     func textFieldDidBeginEditing(_ textField: UITextField) {
         textField.clearsOnBeginEditing = true
+    }
+    
+    func checkValidUrl(urlString: String) -> Bool {
+        if let url = URL(string: urlString){
+            return UIApplication.shared.canOpenURL(url)
+        }
+        return false
     }
     
 }
