@@ -12,7 +12,6 @@ class LoginVC: UIViewController, UITextFieldDelegate {
     @IBOutlet weak var emailTextField: UITextField!
     @IBOutlet weak var passwordTextField: UITextField!
     @IBOutlet weak var accountSignupLabel: UILabel!
-    let textDelegate = TextFieldDelegate()
     @IBOutlet weak var loginButton: UIButton!
     @IBOutlet weak var loginWithFacebookButton: UIButton!
     override func viewDidLoad() {
@@ -20,8 +19,8 @@ class LoginVC: UIViewController, UITextFieldDelegate {
         accountSignupLabel.isUserInteractionEnabled = true
         let tap = UITapGestureRecognizer(target: self, action: #selector(self.accountSignup))
         accountSignupLabel.addGestureRecognizer(tap)
-        emailTextField.delegate = textDelegate
-        passwordTextField.delegate = textDelegate
+        emailTextField.delegate = self
+        passwordTextField.delegate = self
     }
     
     override func viewWillDisappear(_ animated: Bool) {
@@ -68,7 +67,7 @@ class LoginVC: UIViewController, UITextFieldDelegate {
     
     // Move view up, so both textviews and loginButton are visible
     func keyboardWillShow(_ notification: Notification) {
-        view.frame.origin.y = (getKeyboardHeight(notification: notification) - (view.frame.height - loginWithFacebookButton.frame.maxY) ) * -1
+        view.frame.origin.y = (getKeyboardHeight(notification: notification) - (view.frame.height - view.frame.maxY) ) * -0.45
     }
     // Move view back
     func keyboardWillHide(_ notification:Notification) {
@@ -82,7 +81,6 @@ class LoginVC: UIViewController, UITextFieldDelegate {
     }
     
     
-    
     // Adding or removing observers for keyboard notifications
     func subscribedToKeyboardNotifications(_ state: Bool) {
         if state {
@@ -92,6 +90,13 @@ class LoginVC: UIViewController, UITextFieldDelegate {
             NotificationCenter.default.removeObserver(self, name: .UIKeyboardWillShow, object: nil)
             NotificationCenter.default.removeObserver(self, name: .UIKeyboardWillHide, object: nil)
         }
+    }
+    
+    
+    //return function on keyboard
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        textField.resignFirstResponder()
+        return true
     }
     
     

@@ -25,7 +25,6 @@ class MapVC: UIViewController, MKMapViewDelegate {
         self.mapView.addAnnotations(StudentInformationModel.sharedInstance().getStudentAnnotations())
     }
     
-    
     @IBAction func logoutButtonPressed(_ sender: Any) {
         self.dismiss(animated: true) {
             UdacityClient.sharedInstance().deleteSession(completionHandler: { (success, error) in

@@ -9,8 +9,7 @@
 import UIKit
 import MapKit
 
-
-class PinEditorVC: UIViewController, MKMapViewDelegate {
+class PinEditorVC: UIViewController, MKMapViewDelegate, UITextFieldDelegate  {
 
 
     @IBOutlet weak var questionLabel1: UILabel!
@@ -24,7 +23,6 @@ class PinEditorVC: UIViewController, MKMapViewDelegate {
     var mapString = String()
     var gotLocation = false
     var sendingView: UIViewController?
-    let textFieldDelegate = TextFieldDelegate()
     @IBOutlet weak var mapView: MKMapView!
     @IBOutlet weak var locationTextField: UITextField!
     
@@ -32,8 +30,7 @@ class PinEditorVC: UIViewController, MKMapViewDelegate {
         super.viewDidLoad()
         mapView.delegate = self
         submittingLocation = true
-        locationTextField.delegate = textFieldDelegate
-
+        locationTextField.delegate = self
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -63,7 +60,6 @@ class PinEditorVC: UIViewController, MKMapViewDelegate {
             getGeocodedLocationFromUser { (success, error) in
                 if success{
                     self.locationTextField.text = "Enter what you're studying"
-                    self.locationTextField.clearsOnBeginEditing = true
                     self.questionLabel1.text = "What are you"
                     self.submitButton.setTitle("Submit", for: UIControlState.normal)
                     self.gotLocation = true
@@ -75,11 +71,11 @@ class PinEditorVC: UIViewController, MKMapViewDelegate {
         
         //If we have the location
         if gotLocation == true {
-            self.activityIndicatoryShowing(showing: true, view: self.mapView)
+            self.activityIndicatoryShowing(showing: true, view: self.view)
             submitLocation(completionHandler: { (success, error) in
                 DispatchQueue.main.async {
                     if success{
-                        self.activityIndicatoryShowing(showing: false, view: self.mapView)
+                        self.activityIndicatoryShowing(showing: false, view: self.view)
                         self.dismiss(animated: true, completion: {
                             if self.method == Constants.HTTPMethods.post {
                                 self.sendingView?.displayError(title: "Success!", message: "Successfully created")
@@ -89,7 +85,7 @@ class PinEditorVC: UIViewController, MKMapViewDelegate {
                         })
                     }else{
                         if let error = error{
-                            self.activityIndicatoryShowing(showing: false, view: self.mapView)
+                            self.activityIndicatoryShowing(showing: false, view: self.view)
                             self.displayError(title: Constants.ErrorMessages.errorTitleGeocode, message: error)
                         }
                     }
@@ -179,12 +175,14 @@ class PinEditorVC: UIViewController, MKMapViewDelegate {
         } else {
             coordCompletionHandler(false, "No matching location found")
         }
-        
     }
     
     // Move view up, so both textviews and loginButton are visible
     func keyboardWillShow(_ notification: Notification) {
-        view.frame.origin.y = (getKeyboardHeight(notification: notification) - (view.frame.height - mapView.frame.maxY) ) * -0.25
+        if UIDeviceOrientationIsLandscape(UIDevice.current.orientation) {
+            view.frame.origin.y = (getKeyboardHeight(notification: notification) - (view.frame.height - locationTextField.frame.maxY) ) * -0.6
+        }
+        
     }
     // Move view back
     func keyboardWillHide(_ notification:Notification) {
@@ -210,5 +208,13 @@ class PinEditorVC: UIViewController, MKMapViewDelegate {
         }
     }
     
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        textField.resignFirstResponder()
+        return true
+    }
+    
+    func textFieldDidBeginEditing(_ textField: UITextField) {
+        textField.clearsOnBeginEditing = true
+    }
     
 }
